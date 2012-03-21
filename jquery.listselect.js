@@ -1,5 +1,5 @@
 /*!
- * List Select jQuery plugin v0.1
+ * List Select jQuery plugin v0.2
  *
  * Copyright 2011-2010 by Andrew Miller <andrewontour@gmail.com>
  *
@@ -19,77 +19,84 @@
  */
 /* Changelog:
  *
- * 0.1    2012-12-26  Initial release
+ * 0.1    2011-12-26  Initial release
+ * 0.2    2012-03-12  Added ability to set initial row if none already selected
+ *                    Fixed incorrect release date for 0.1 release
  */
 
- (function($) {
+(function($) {
 
-     $.fn.listSelect = function(config) {
+    $.fn.listSelect = function(config) {
 
-         var defaults = {
-             "highlightClass": 'selected',
-             "initCallback": undefined,
-             "losingRowCallback": undefined,
-             "gainingRowCallback": undefined
-         };
+        var defaults = {
+            "highlightClass": 'selected',
+            "initCallback": undefined,
+            "losingRowCallback": undefined,
+            "gainingRowCallback": undefined,
+            "initialRow": undefined
+        };
 
-         if (config) $.extend(defaults, config);
+        if (config) $.extend(defaults, config);
 
-         this.each(function(){
-             var me = $(this),
-                 row,
-                 input;
+        this.each(function(){
+            var me = $(this),
+                row,
+                input;
 
-             // find the currently selected row
-             input = me.find(':checked');
+            // find the currently selected row
+            input = me.find(':checked');
 
-             // check the first input if none are selected
-             if( input.length === 0 ) {
-                 input = me.find('input:first');
-                 input.prop('checked', true);
-             }
+            // check the first input if none are selected
+            if( input.length === 0 ) {
+                if( defaults.initialRow ) {
+                    input = me.find('input').eq(defaults.initialRow);
+                } else {
+                    input = me.find('input:first');
+                }
+                $(input).prop('checked', true);
+            }
 
-             // find the row to highlight
-             row = input.closest('li');
+            // find the row to highlight
+            row = input.closest('li');
 
-             // run the initialise callback
-             if( typeof defaults.initCallback === 'function' ) {
-                 defaults.initCallback.call(row);
-             }
+            // run the initialise callback
+            if( typeof defaults.initCallback === 'function' ) {
+                defaults.initCallback.call(row);
+            }
 
-             // add the highlight class to the selected row
-             row.addClass(defaults.highlightClass);
+            // add the highlight class to the selected row
+            row.addClass(defaults.highlightClass);
 
-             // run the gaining row callback against the row that's been selected
-             if( typeof defaults.gainingRowCallback === 'function' ) {
-                 defaults.gainingRowCallback.call(row);
-             }
+            // run the gaining row callback against the row that's been selected
+            if( typeof defaults.gainingRowCallback === 'function' ) {
+                defaults.gainingRowCallback.call(row);
+            }
 
-             // delegate the click handlers
-             me.delegate('li', 'click', function(e) {
-                 e.stopPropagation();
+            // delegate the click handlers
+            me.delegate('li', 'click', function(e) {
+                e.stopPropagation();
 
-                 var gainingRow = $(e.currentTarget),
-                     losingRow = gainingRow.closest('ul').find('.' + defaults.highlightClass);
+                var gainingRow = $(e.currentTarget),
+                    losingRow = gainingRow.closest('ul').find('.' + defaults.highlightClass);
 
-                 if( !gainingRow.hasClass(defaults.highlightClass) ) {
-                     // find selected row
-                     losingRow.removeClass(defaults.highlightClass);
-                     gainingRow.addClass(defaults.highlightClass).find('input').prop('checked', true);
+                if( !gainingRow.hasClass(defaults.highlightClass) ) {
+                    // find selected row
+                    losingRow.removeClass(defaults.highlightClass);
+                    gainingRow.addClass(defaults.highlightClass).find('input').prop('checked', true);
 
-                     if( typeof defaults.losingRowCallback === 'function' ) {
-                         defaults.losingRowCallback.call(losingRow);
-                     }
+                    if( typeof defaults.losingRowCallback === 'function' ) {
+                        defaults.losingRowCallback.call(losingRow);
+                    }
 
-                     if( typeof defaults.gainingRowCallback === 'function' ) {
-                         defaults.gainingRowCallback.call(gainingRow);
-                     }
-                 }
-             });
+                    if( typeof defaults.gainingRowCallback === 'function' ) {
+                        defaults.gainingRowCallback.call(gainingRow);
+                    }
+                }
+            });
 
-         });
+        });
 
-         return this;
-     };
+        return this;
+    };
 
- })(jQuery);
+})(jQuery);
