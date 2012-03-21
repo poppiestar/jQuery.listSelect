@@ -3,7 +3,8 @@ Usage
 
 Taking the following markup as an example:
 
-```<ul id="list-select">
+```
+<ul id="list-select">
 	<li><input type="radio" name="select-me" value="1">Select One</li>
 	<li><input type="radio" name="select-me" value="2">Select Two</li>
 	<li><input type="radio" name="select-me" value="3">Select Three</li>
